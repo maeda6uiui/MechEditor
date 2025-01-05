@@ -42,6 +42,7 @@ public class MechEditorMain extends Mechtatel {
     public void onCreate(MttWindow window) {
         imGuiScreen = window.createScreen(new MttScreen.MttScreenCreateInfo());
 
+        //Load font before creating ImGui instance
         ImGui.setCurrentContext(window.getImGuiContext());
         ImGuiIO io = ImGui.getIO();
         ImFontAtlas fonts = io.getFonts();
@@ -50,7 +51,6 @@ public class MechEditorMain extends Mechtatel {
         fonts.build();
 
         imGui = imGuiScreen.createImGui();
-
         mainController = new MainController(
                 this::closeAllWindows
         );
