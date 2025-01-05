@@ -45,7 +45,7 @@ public class MechEditorMain extends Mechtatel {
         ImGui.setCurrentContext(window.getImGuiContext());
         ImGuiIO io = ImGui.getIO();
         ImFontAtlas fonts = io.getFonts();
-        ImFont font = fonts.addFontFromFileTTF("./MechEditor/Font/Roboto-Regular.ttf", 18.0f);
+        ImFont font = fonts.addFontFromFileTTF("./MechEditor/Font/Roboto/Roboto-Regular.ttf", 18.0f);
         io.setFontDefault(font);
         fonts.build();
 
