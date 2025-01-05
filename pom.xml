@@ -18,7 +18,7 @@
         <dependency>
             <groupId>com.github.dabasan</groupId>
             <artifactId>mechtatel-core</artifactId>
-            <version>0.0.1-alpha6</version>
+            <version>0.0.1-alpha7</version>
         </dependency>
         <dependency>
             <groupId>com.github.dabasan</groupId>
