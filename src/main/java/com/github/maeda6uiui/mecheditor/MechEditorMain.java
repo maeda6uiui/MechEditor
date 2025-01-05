@@ -5,6 +5,10 @@ import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.MttWindow;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttImGui;
+import imgui.ImFont;
+import imgui.ImFontAtlas;
+import imgui.ImGui;
+import imgui.ImGuiIO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +41,16 @@ public class MechEditorMain extends Mechtatel {
     @Override
     public void onCreate(MttWindow window) {
         imGuiScreen = window.createScreen(new MttScreen.MttScreenCreateInfo());
+
+        ImGui.setCurrentContext(window.getImGuiContext());
+        ImGuiIO io = ImGui.getIO();
+        ImFontAtlas fonts = io.getFonts();
+        ImFont font = fonts.addFontFromFileTTF("./MechEditor/Font/Roboto-Regular.ttf", 18.0f);
+        io.setFontDefault(font);
+        fonts.build();
+
         imGui = imGuiScreen.createImGui();
+
         mainController = new MainController(
                 this::closeAllWindows
         );
