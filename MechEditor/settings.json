@@ -1,0 +1,39 @@
+{
+    "window": {
+        "title": "MechEditor",
+        "width": 1280,
+        "height": 720,
+        "resizable": true,
+        "fullScreen": false,
+        "windowedFullScreen": false,
+        "monitorIndex": 0
+    },
+    "headless": {
+        "width": 1280,
+        "height": 720,
+        "useOpenAL": false
+    },
+    "system": {
+        "fps": 60
+    },
+    "cache": {
+        "useCache": true,
+        "dirname": "./MechEditor/Cache"
+    },
+    "rendering": {
+        "engine": "VULKAN",
+        "imageFormat": "SRGB"
+    },
+    "textureOperation": {
+        "width": -1,
+        "height": -1,
+        "changeExtentOnRecreate": true
+    },
+    "vulkan": {
+        "enableValidationLayer": true,
+        "preferablePhysicalDeviceIndex": 0,
+        "preferableGraphicsFamilyIndex": 0,
+        "preferablePresentFamilyIndex": 0,
+        "albedoMSAASamples": 1
+    }
+}
