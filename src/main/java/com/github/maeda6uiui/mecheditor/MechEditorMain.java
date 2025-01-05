@@ -4,10 +4,9 @@ import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.MttWindow;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
+import com.github.maeda6uiui.mechtatel.core.screen.component.MttImGui;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
 
 /**
  * Main class of MechEditor
@@ -31,19 +30,24 @@ public class MechEditorMain extends Mechtatel {
                 );
     }
 
-    private MttScreen mainScreen;
+    private MttScreen imGuiScreen;
+    private MttImGui imGui;
+    private MainController mainController;
 
     @Override
     public void onCreate(MttWindow window) {
-        mainScreen = window.createScreen(
-                new MttScreen.MttScreenCreateInfo()
-                        .setPostProcessingNaborNames(List.of("pp.parallel_light"))
+        imGuiScreen = window.createScreen(new MttScreen.MttScreenCreateInfo());
+        imGui = imGuiScreen.createImGui();
+        mainController = new MainController(
+                this::closeAllWindows
         );
     }
 
     @Override
     public void onUpdate(MttWindow window) {
-        mainScreen.draw();
-        window.present(mainScreen);
+        imGui.declare(mainController::declare);
+
+        imGuiScreen.draw();
+        window.present(imGuiScreen);
     }
 }
