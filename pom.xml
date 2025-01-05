@@ -30,5 +30,10 @@
             <artifactId>jxm-pd1</artifactId>
             <version>2.2.0</version>
         </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.5.15</version>
+        </dependency>
     </dependencies>
 </project>
