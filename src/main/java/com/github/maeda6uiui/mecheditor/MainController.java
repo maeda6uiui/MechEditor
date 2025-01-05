@@ -1,6 +1,8 @@
 package com.github.maeda6uiui.mecheditor;
 
 import imgui.ImGui;
+import imgui.extension.imguifiledialog.ImGuiFileDialog;
+import imgui.extension.imguifiledialog.flag.ImGuiFileDialogFlags;
 
 /**
  * Main controller
@@ -15,7 +17,17 @@ public class MainController {
     }
 
     public void declare() {
+        this.declareOpenFileDialog();
         this.declareMainMenuBar();
+    }
+
+    private void declareOpenFileDialog() {
+        if (ImGuiFileDialog.display("open_file", ImGuiFileDialogFlags.None, 400, 300)) {
+            if (ImGuiFileDialog.isOk()) {
+
+            }
+            ImGuiFileDialog.close();
+        }
     }
 
     private void declareMainMenuBar() {
@@ -25,7 +37,7 @@ public class MainController {
 
                 }
                 if (ImGui.menuItem("Open", "Ctrl+O")) {
-
+                    ImGuiFileDialog.openModal("open_file", "Open File", ".bd1", "");
                 }
                 ImGui.separator();
                 if (ImGui.menuItem("Save", "Ctrl+S")) {
