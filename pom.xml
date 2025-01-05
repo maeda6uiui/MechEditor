@@ -14,4 +14,21 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.github.dabasan</groupId>
+            <artifactId>mechtatel-core</artifactId>
+            <version>0.0.1-alpha6</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.dabasan</groupId>
+            <artifactId>jxm-bd1</artifactId>
+            <version>2.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.dabasan</groupId>
+            <artifactId>jxm-pd1</artifactId>
+            <version>2.2.0</version>
+        </dependency>
+    </dependencies>
 </project>
