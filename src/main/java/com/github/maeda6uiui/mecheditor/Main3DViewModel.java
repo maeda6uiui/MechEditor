@@ -40,11 +40,11 @@ public class Main3DViewModel {
         model = screen.createModel(modelFile);
     }
 
-    public void recreate(MttScreen imguiScreen) {
+    public void recreateImage(MttScreen imguiScreen) {
         image = screen.texturize(ScreenImageType.COLOR, imguiScreen);
     }
 
-    public void update(MttWindow window) {
+    public void updateCamera(MttWindow window) {
         camera.translate(
                 window.getKeyboardPressingCount(KeyCode.W),
                 window.getKeyboardPressingCount(KeyCode.S),
@@ -57,7 +57,9 @@ public class Main3DViewModel {
                 window.getKeyboardPressingCount(KeyCode.LEFT),
                 window.getKeyboardPressingCount(KeyCode.RIGHT)
         );
+    }
 
+    public void draw() {
         screen.draw();
     }
 

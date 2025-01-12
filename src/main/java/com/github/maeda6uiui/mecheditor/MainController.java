@@ -54,7 +54,8 @@ public class MainController {
                         logger.error("Failed to load model", e);
                     }
                 });
-        viewModel3D.update(window);
+        viewModel3D.updateCamera(window);
+        viewModel3D.draw();
     }
 
     private void setStyle() {
