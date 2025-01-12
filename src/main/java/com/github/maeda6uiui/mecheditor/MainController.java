@@ -5,6 +5,8 @@ import imgui.extension.imguifiledialog.ImGuiFileDialog;
 import imgui.extension.imguifiledialog.flag.ImGuiFileDialogFlags;
 import imgui.flag.ImGuiCol;
 
+import java.util.Map;
+
 /**
  * Main controller
  *
@@ -13,8 +15,12 @@ import imgui.flag.ImGuiCol;
 public class MainController {
     private Runnable cbQuit;
 
+    private MainViewModel viewModel;
+
     public MainController(Runnable cbQuit) {
         this.cbQuit = cbQuit;
+
+        viewModel = new MainViewModel();
     }
 
     public void declare() {
@@ -30,7 +36,12 @@ public class MainController {
     private void declareOpenFileDialog() {
         if (ImGuiFileDialog.display("open_file", ImGuiFileDialogFlags.None, 400, 300)) {
             if (ImGuiFileDialog.isOk()) {
-
+                Map<String, String> selections = ImGuiFileDialog.getSelection();
+                selections
+                        .entrySet()
+                        .stream()
+                        .findFirst()
+                        .ifPresent(e -> viewModel.getSelectedFilepath().set(e.getValue()));
             }
             ImGuiFileDialog.close();
         }
