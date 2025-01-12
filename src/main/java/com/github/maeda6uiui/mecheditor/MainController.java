@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 
@@ -38,22 +39,25 @@ public class MainController {
         this.setStyle();
         this.declareOpenFileDialog();
         this.declareMainMenuBar();
+        this.declare3DView();
         this.declareXZView();
         this.declareXYView();
         this.declareYZView();
+    }
+
+    private void loadModel(Path modelFile) {
+        try {
+            viewModel3D.loadModel(modelFile);
+        } catch (IOException e) {
+            logger.error("Failed to load model", e);
+        }
     }
 
     public void update(MttWindow window) {
         viewModel3D
                 .getSelectedFilepath()
                 .get()
-                .ifPresent(v -> {
-                    try {
-                        viewModel3D.loadModel(Paths.get(v));
-                    } catch (IOException e) {
-                        logger.error("Failed to load model", e);
-                    }
-                });
+                .ifPresent(v -> this.loadModel(Paths.get(v)));
         viewModel3D.updateCamera(window);
         viewModel3D.draw();
     }
@@ -78,7 +82,7 @@ public class MainController {
 
     private void declare3DView() {
         if (ImGui.begin("3D View")) {
-
+            
             ImGui.end();
         }
     }
