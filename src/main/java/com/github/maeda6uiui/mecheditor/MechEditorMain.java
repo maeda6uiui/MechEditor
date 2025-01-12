@@ -61,6 +61,7 @@ public class MechEditorMain extends Mechtatel {
     @Override
     public void onUpdate(MttWindow window) {
         imGui.declare(mainController::declare);
+        mainController.update(window);
 
         imGuiScreen.draw();
         window.present(imGuiScreen);
