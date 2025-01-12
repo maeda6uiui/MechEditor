@@ -1,14 +1,14 @@
 package com.github.maeda6uiui.mecheditor;
 
 /**
- * View model for the main view
+ * View model for the main 3D view
  *
  * @author maeda6uiui
  */
-public class MainViewModel {
+public class Main3DViewModel {
     private MEProperty<String> selectedFilepath;
 
-    public MainViewModel() {
+    public Main3DViewModel() {
         selectedFilepath = new MEProperty<>("");
     }
 

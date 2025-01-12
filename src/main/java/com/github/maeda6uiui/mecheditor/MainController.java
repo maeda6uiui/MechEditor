@@ -15,12 +15,12 @@ import java.util.Map;
 public class MainController {
     private Runnable cbQuit;
 
-    private MainViewModel viewModel;
+    private Main3DViewModel viewModel3D;
 
     public MainController(Runnable cbQuit) {
         this.cbQuit = cbQuit;
 
-        viewModel = new MainViewModel();
+        viewModel3D = new Main3DViewModel();
     }
 
     public void declare() {
@@ -41,7 +41,7 @@ public class MainController {
                         .entrySet()
                         .stream()
                         .findFirst()
-                        .ifPresent(e -> viewModel.getSelectedFilepath().set(e.getValue()));
+                        .ifPresent(e -> viewModel3D.getSelectedFilepath().set(e.getValue()));
             }
             ImGuiFileDialog.close();
         }
