@@ -82,30 +82,30 @@ public class MainController {
 
     private void declare3DView() {
         if (ImGui.begin("3D View")) {
-            
-            ImGui.end();
+
         }
+        ImGui.end();
     }
 
     private void declareXZView() {
         if (ImGui.begin("X-Z View")) {
 
-            ImGui.end();
         }
+        ImGui.end();
     }
 
     private void declareXYView() {
         if (ImGui.begin("X-Y View")) {
 
-            ImGui.end();
         }
+        ImGui.end();
     }
 
     private void declareYZView() {
         if (ImGui.begin("Y-Z View")) {
 
-            ImGui.end();
         }
+        ImGui.end();
     }
 
     private void declareMainMenuBar() {
