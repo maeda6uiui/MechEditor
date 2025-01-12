@@ -29,6 +29,7 @@ public class Main3DViewModel {
         screen = window.createScreen(
                 new MttScreen.MttScreenCreateInfo()
                         .setPostProcessingNaborNames(List.of("pp.parallel_light"))
+                        .setShouldChangeExtentOnRecreate(false)
         );
         camera = new FreeCamera(screen.getCamera());
         image = screen.texturize(ScreenImageType.COLOR, imguiScreen);
@@ -38,10 +39,6 @@ public class Main3DViewModel {
 
     public void loadModel(Path modelFile) throws IOException {
         model = screen.createModel(modelFile);
-    }
-
-    public void recreateImage(MttScreen imguiScreen) {
-        image = screen.texturize(ScreenImageType.COLOR, imguiScreen);
     }
 
     public void updateCamera(MttWindow window) {

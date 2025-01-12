@@ -3,7 +3,7 @@
         "title": "MechEditor",
         "width": 1280,
         "height": 720,
-        "resizable": true,
+        "resizable": false,
         "fullScreen": false,
         "windowedFullScreen": false,
         "monitorIndex": 0
