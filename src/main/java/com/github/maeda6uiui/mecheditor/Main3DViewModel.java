@@ -38,6 +38,10 @@ public class Main3DViewModel {
     }
 
     public void loadModel(Path modelFile) throws IOException {
+        if (model != null) {
+            model.cleanup();
+        }
+
         model = screen.createModel(modelFile);
     }
 
