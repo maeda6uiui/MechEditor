@@ -3,6 +3,7 @@ package com.github.maeda6uiui.mecheditor;
 import imgui.ImGui;
 import imgui.extension.imguifiledialog.ImGuiFileDialog;
 import imgui.extension.imguifiledialog.flag.ImGuiFileDialogFlags;
+import imgui.flag.ImGuiCol;
 
 /**
  * Main controller
@@ -17,8 +18,13 @@ public class MainController {
     }
 
     public void declare() {
+        this.setStyle();
         this.declareOpenFileDialog();
         this.declareMainMenuBar();
+    }
+
+    private void setStyle() {
+        ImGui.getStyle().setColor(ImGuiCol.ModalWindowDimBg, 1.0f, 1.0f, 1.0f, 0.01f);
     }
 
     private void declareOpenFileDialog() {
