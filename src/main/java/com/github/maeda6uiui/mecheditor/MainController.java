@@ -1,10 +1,16 @@
 package com.github.maeda6uiui.mecheditor;
 
+import com.github.maeda6uiui.mechtatel.core.MttWindow;
+import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import imgui.ImGui;
 import imgui.extension.imguifiledialog.ImGuiFileDialog;
 import imgui.extension.imguifiledialog.flag.ImGuiFileDialogFlags;
 import imgui.flag.ImGuiCol;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.Map;
 
 /**
@@ -13,20 +19,42 @@ import java.util.Map;
  * @author maeda6uiui
  */
 public class MainController {
+    private static final Logger logger = LoggerFactory.getLogger(MainController.class);
+
     private Runnable cbQuit;
 
     private Main3DViewModel viewModel3D;
 
-    public MainController(Runnable cbQuit) {
+    public MainController(
+            MttWindow window,
+            MttScreen imguiScreen,
+            Runnable cbQuit) {
         this.cbQuit = cbQuit;
 
-        viewModel3D = new Main3DViewModel();
+        viewModel3D = new Main3DViewModel(window, imguiScreen);
     }
 
     public void declare() {
         this.setStyle();
         this.declareOpenFileDialog();
         this.declareMainMenuBar();
+        this.declareXZView();
+        this.declareXYView();
+        this.declareYZView();
+    }
+
+    public void update(MttWindow window) {
+        viewModel3D
+                .getSelectedFilepath()
+                .get()
+                .ifPresent(v -> {
+                    try {
+                        viewModel3D.loadModel(Paths.get(v));
+                    } catch (IOException e) {
+                        logger.error("Failed to load model", e);
+                    }
+                });
+        viewModel3D.update(window);
     }
 
     private void setStyle() {
@@ -44,6 +72,34 @@ public class MainController {
                         .ifPresent(e -> viewModel3D.getSelectedFilepath().set(e.getValue()));
             }
             ImGuiFileDialog.close();
+        }
+    }
+
+    private void declare3DView() {
+        if (ImGui.begin("3D View")) {
+
+            ImGui.end();
+        }
+    }
+
+    private void declareXZView() {
+        if (ImGui.begin("X-Z View")) {
+
+            ImGui.end();
+        }
+    }
+
+    private void declareXYView() {
+        if (ImGui.begin("X-Y View")) {
+
+            ImGui.end();
+        }
+    }
+
+    private void declareYZView() {
+        if (ImGui.begin("Y-Z View")) {
+
+            ImGui.end();
         }
     }
 

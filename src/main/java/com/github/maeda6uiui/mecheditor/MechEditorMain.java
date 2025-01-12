@@ -52,6 +52,8 @@ public class MechEditorMain extends Mechtatel {
 
         imGui = imGuiScreen.createImGui();
         mainController = new MainController(
+                window,
+                imGuiScreen,
                 this::closeAllWindows
         );
     }
