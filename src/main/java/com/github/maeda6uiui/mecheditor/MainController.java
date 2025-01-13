@@ -1,6 +1,8 @@
 package com.github.maeda6uiui.mecheditor;
 
 import com.github.maeda6uiui.mechtatel.core.MttWindow;
+import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
+import com.github.maeda6uiui.mechtatel.core.input.keyboard.KeyCode;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import imgui.ImGui;
 import imgui.extension.imguifiledialog.ImGuiFileDialog;
@@ -11,8 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -25,7 +27,7 @@ public class MainController {
 
     private Runnable cbQuit;
 
-    private Main3DViewModel viewModel3D;
+    private Map<String, MainViewModel> viewModels;
 
     public MainController(
             MttWindow window,
@@ -33,7 +35,9 @@ public class MainController {
             Runnable cbQuit) {
         this.cbQuit = cbQuit;
 
-        viewModel3D = new Main3DViewModel(window, imguiScreen);
+        viewModels = new HashMap<>();
+        var viewModel3D = new Main3DViewModel(window, imguiScreen);
+        viewModels.put("3d", viewModel3D);
     }
 
     public void declare() {
@@ -46,21 +50,40 @@ public class MainController {
         this.declareYZView();
     }
 
-    private void loadModel(Path modelFile) {
-        try {
-            viewModel3D.loadModel(modelFile);
-        } catch (IOException e) {
-            logger.error("Failed to load model", e);
+    private void loadModel(String modelFilepath) {
+        for (var viewModel : viewModels.values()) {
+            try {
+                viewModel.loadModel(Paths.get(modelFilepath));
+            } catch (IOException e) {
+                logger.error("Failed to load model", e);
+                break;
+            }
         }
     }
 
     public void update(MttWindow window) {
-        viewModel3D
-                .getSelectedFilepath()
-                .get()
-                .ifPresent(v -> this.loadModel(Paths.get(v)));
-        viewModel3D.updateCamera(window);
-        viewModel3D.draw();
+        viewModels.forEach((k, v) -> {
+            v
+                    .getSelectedFilepath()
+                    .get()
+                    .ifPresent(this::loadModel);
+
+            FreeCamera camera = v.getCamera();
+            camera.translate(
+                    window.getKeyboardPressingCount(KeyCode.W),
+                    window.getKeyboardPressingCount(KeyCode.S),
+                    window.getKeyboardPressingCount(KeyCode.A),
+                    window.getKeyboardPressingCount(KeyCode.D)
+            );
+            camera.rotate(
+                    window.getKeyboardPressingCount(KeyCode.UP),
+                    window.getKeyboardPressingCount(KeyCode.DOWN),
+                    window.getKeyboardPressingCount(KeyCode.LEFT),
+                    window.getKeyboardPressingCount(KeyCode.RIGHT)
+            );
+
+            v.draw();
+        });
     }
 
     private void setStyle() {
@@ -75,13 +98,19 @@ public class MainController {
                         .entrySet()
                         .stream()
                         .findFirst()
-                        .ifPresent(e -> viewModel3D.getSelectedFilepath().set(e.getValue()));
+                        .ifPresent(e -> {
+                            viewModels
+                                    .values()
+                                    .forEach(v -> v.getSelectedFilepath().set(e.getValue()));
+                        });
             }
             ImGuiFileDialog.close();
         }
     }
 
     private void declare3DView() {
+        MainViewModel viewModel3D = viewModels.get("3d");
+
         if (ImGui.begin("3D View")) {
             ImGui.setWindowPos(50, 50, ImGuiCond.FirstUseEver);
             ImGui.setWindowSize(640, 480, ImGuiCond.FirstUseEver);
