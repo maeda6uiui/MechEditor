@@ -28,6 +28,7 @@ public class MainController {
     private Runnable cbQuit;
 
     private Map<String, MainViewModel> viewModels;
+    private Map<String, Boolean> viewFocusedFlags;
 
     public MainController(
             MttWindow window,
@@ -38,6 +39,9 @@ public class MainController {
         viewModels = new HashMap<>();
         var viewModel3D = new Main3DViewModel(window, imguiScreen);
         viewModels.put("3d", viewModel3D);
+
+        viewFocusedFlags = new HashMap<>();
+        viewFocusedFlags.put("3d", false);
     }
 
     public void declare() {
@@ -68,19 +72,22 @@ public class MainController {
                     .get()
                     .ifPresent(this::loadModel);
 
-            FreeCamera camera = v.getCamera();
-            camera.translate(
-                    window.getKeyboardPressingCount(KeyCode.W),
-                    window.getKeyboardPressingCount(KeyCode.S),
-                    window.getKeyboardPressingCount(KeyCode.A),
-                    window.getKeyboardPressingCount(KeyCode.D)
-            );
-            camera.rotate(
-                    window.getKeyboardPressingCount(KeyCode.UP),
-                    window.getKeyboardPressingCount(KeyCode.DOWN),
-                    window.getKeyboardPressingCount(KeyCode.LEFT),
-                    window.getKeyboardPressingCount(KeyCode.RIGHT)
-            );
+            boolean focused = viewFocusedFlags.get(k);
+            if (focused) {
+                FreeCamera camera = v.getCamera();
+                camera.translate(
+                        window.getKeyboardPressingCount(KeyCode.W),
+                        window.getKeyboardPressingCount(KeyCode.S),
+                        window.getKeyboardPressingCount(KeyCode.A),
+                        window.getKeyboardPressingCount(KeyCode.D)
+                );
+                camera.rotate(
+                        window.getKeyboardPressingCount(KeyCode.UP),
+                        window.getKeyboardPressingCount(KeyCode.DOWN),
+                        window.getKeyboardPressingCount(KeyCode.LEFT),
+                        window.getKeyboardPressingCount(KeyCode.RIGHT)
+                );
+            }
 
             v.draw();
         });
@@ -112,6 +119,8 @@ public class MainController {
         MainViewModel viewModel3D = viewModels.get("3d");
 
         if (ImGui.begin("3D View")) {
+            viewFocusedFlags.put("3d", ImGui.isWindowFocused());
+
             ImGui.setWindowPos(50, 50, ImGuiCond.FirstUseEver);
             ImGui.setWindowSize(640, 480, ImGuiCond.FirstUseEver);
             ImGui.image(
@@ -125,6 +134,8 @@ public class MainController {
 
     private void declareXZView() {
         if (ImGui.begin("X-Z View")) {
+            viewFocusedFlags.put("xz", ImGui.isWindowFocused());
+
             ImGui.setWindowPos(100, 100, ImGuiCond.FirstUseEver);
             ImGui.setWindowSize(640, 480, ImGuiCond.FirstUseEver);
         }
@@ -133,6 +144,8 @@ public class MainController {
 
     private void declareXYView() {
         if (ImGui.begin("X-Y View")) {
+            viewFocusedFlags.put("xy", ImGui.isWindowFocused());
+
             ImGui.setWindowPos(150, 150, ImGuiCond.FirstUseEver);
             ImGui.setWindowSize(640, 480, ImGuiCond.FirstUseEver);
         }
@@ -141,6 +154,8 @@ public class MainController {
 
     private void declareYZView() {
         if (ImGui.begin("Y-Z View")) {
+            viewFocusedFlags.put("yz", ImGui.isWindowFocused());
+
             ImGui.setWindowPos(200, 200, ImGuiCond.FirstUseEver);
             ImGui.setWindowSize(640, 480, ImGuiCond.FirstUseEver);
         }
