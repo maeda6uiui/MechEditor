@@ -27,8 +27,8 @@ public class MainController {
 
     private Runnable cbQuit;
 
-    private Map<String, MainViewModel> viewModels;
-    private Map<String, Boolean> viewFocusedFlags;
+    private static int viewModelCount = 0;
+    private Map<Integer, Main3DViewModel> viewModels3D;
 
     public MainController(
             MttWindow window,
@@ -36,26 +36,21 @@ public class MainController {
             Runnable cbQuit) {
         this.cbQuit = cbQuit;
 
-        viewModels = new HashMap<>();
-        var viewModel3D = new Main3DViewModel(window, imguiScreen);
-        viewModels.put("3d", viewModel3D);
-
-        viewFocusedFlags = new HashMap<>();
-        viewFocusedFlags.put("3d", false);
+        viewModels3D = new HashMap<>();
+        var viewModel = new Main3DViewModel(window, imguiScreen);
+        viewModels3D.put(viewModelCount, viewModel);
+        viewModelCount++;
     }
 
     public void declare() {
         this.setStyle();
         this.declareOpenFileDialog();
         this.declareMainMenuBar();
-        this.declare3DView();
-        this.declareXZView();
-        this.declareXYView();
-        this.declareYZView();
+        this.declare3DViews();
     }
 
     private void loadModel(String modelFilepath) {
-        for (var viewModel : viewModels.values()) {
+        for (var viewModel : viewModels3D.values()) {
             try {
                 viewModel.loadModel(Paths.get(modelFilepath));
             } catch (IOException e) {
@@ -66,14 +61,13 @@ public class MainController {
     }
 
     public void update(MttWindow window) {
-        viewModels.forEach((k, v) -> {
+        viewModels3D.forEach((k, v) -> {
             v
                     .getSelectedFilepath()
                     .get()
                     .ifPresent(this::loadModel);
 
-            boolean focused = viewFocusedFlags.get(k);
-            if (focused) {
+            if (v.getFocused()) {
                 FreeCamera camera = v.getCamera();
                 camera.translate(
                         window.getKeyboardPressingCount(KeyCode.W),
@@ -106,7 +100,7 @@ public class MainController {
                         .stream()
                         .findFirst()
                         .ifPresent(e -> {
-                            viewModels
+                            viewModels3D
                                     .values()
                                     .forEach(v -> v.getSelectedFilepath().set(e.getValue()));
                         });
@@ -115,51 +109,21 @@ public class MainController {
         }
     }
 
-    private void declare3DView() {
-        MainViewModel viewModel3D = viewModels.get("3d");
+    private void declare3DViews() {
+        viewModels3D.forEach((k, v) -> {
+            if (ImGui.begin(String.format("3D View - %d", k))) {
+                v.setFocused(ImGui.isWindowFocused());
 
-        if (ImGui.begin("3D View")) {
-            viewFocusedFlags.put("3d", ImGui.isWindowFocused());
-
-            ImGui.setWindowPos(50, 50, ImGuiCond.FirstUseEver);
-            ImGui.setWindowSize(640, 480, ImGuiCond.FirstUseEver);
-            ImGui.image(
-                    viewModel3D.getScreenImageAllocationIndex(),
-                    ImGui.getContentRegionAvailX(),
-                    ImGui.getContentRegionAvailY()
-            );
-        }
-        ImGui.end();
-    }
-
-    private void declareXZView() {
-        if (ImGui.begin("X-Z View")) {
-            viewFocusedFlags.put("xz", ImGui.isWindowFocused());
-
-            ImGui.setWindowPos(100, 100, ImGuiCond.FirstUseEver);
-            ImGui.setWindowSize(640, 480, ImGuiCond.FirstUseEver);
-        }
-        ImGui.end();
-    }
-
-    private void declareXYView() {
-        if (ImGui.begin("X-Y View")) {
-            viewFocusedFlags.put("xy", ImGui.isWindowFocused());
-
-            ImGui.setWindowPos(150, 150, ImGuiCond.FirstUseEver);
-            ImGui.setWindowSize(640, 480, ImGuiCond.FirstUseEver);
-        }
-        ImGui.end();
-    }
-
-    private void declareYZView() {
-        if (ImGui.begin("Y-Z View")) {
-            viewFocusedFlags.put("yz", ImGui.isWindowFocused());
-
-            ImGui.setWindowPos(200, 200, ImGuiCond.FirstUseEver);
-            ImGui.setWindowSize(640, 480, ImGuiCond.FirstUseEver);
-        }
-        ImGui.end();
+                ImGui.setWindowPos(50 * (k % 10 + 1), 50 * (k % 10 + 1), ImGuiCond.FirstUseEver);
+                ImGui.setWindowSize(640, 480, ImGuiCond.FirstUseEver);
+                ImGui.image(
+                        v.getScreenImageAllocationIndex(),
+                        ImGui.getContentRegionAvailX(),
+                        ImGui.getContentRegionAvailY()
+                );
+            }
+            ImGui.end();
+        });
     }
 
     private void declareMainMenuBar() {
