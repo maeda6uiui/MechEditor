@@ -55,6 +55,10 @@ public class MainViewModel {
         screen.draw();
     }
 
+    protected MttScreen getScreen() {
+        return screen;
+    }
+
     public int getScreenImageAllocationIndex() {
         return image.getVulkanTexture().getAllocationIndex();
     }
