@@ -6,6 +6,7 @@ import imgui.ImGui;
 import imgui.extension.imguifiledialog.ImGuiFileDialog;
 import imgui.extension.imguifiledialog.flag.ImGuiFileDialogFlags;
 import imgui.flag.ImGuiCol;
+import imgui.flag.ImGuiCond;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,28 +83,37 @@ public class MainController {
 
     private void declare3DView() {
         if (ImGui.begin("3D View")) {
-
+            ImGui.setWindowPos(50, 50, ImGuiCond.FirstUseEver);
+            ImGui.setWindowSize(640, 480, ImGuiCond.FirstUseEver);
+            ImGui.image(
+                    viewModel3D.getScreenImageAllocationIndex(),
+                    ImGui.getContentRegionAvailX(),
+                    ImGui.getContentRegionAvailY()
+            );
         }
         ImGui.end();
     }
 
     private void declareXZView() {
         if (ImGui.begin("X-Z View")) {
-
+            ImGui.setWindowPos(100, 100, ImGuiCond.FirstUseEver);
+            ImGui.setWindowSize(640, 480, ImGuiCond.FirstUseEver);
         }
         ImGui.end();
     }
 
     private void declareXYView() {
         if (ImGui.begin("X-Y View")) {
-
+            ImGui.setWindowPos(150, 150, ImGuiCond.FirstUseEver);
+            ImGui.setWindowSize(640, 480, ImGuiCond.FirstUseEver);
         }
         ImGui.end();
     }
 
     private void declareYZView() {
         if (ImGui.begin("Y-Z View")) {
-
+            ImGui.setWindowPos(200, 200, ImGuiCond.FirstUseEver);
+            ImGui.setWindowSize(640, 480, ImGuiCond.FirstUseEver);
         }
         ImGui.end();
     }
