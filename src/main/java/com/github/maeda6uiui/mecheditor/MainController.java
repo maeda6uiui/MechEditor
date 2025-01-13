@@ -29,6 +29,7 @@ public class MainController {
 
     private static int viewModelCount = 0;
     private Map<Integer, Main3DViewModel> viewModels3D;
+    private boolean shouldOpenNew3DView;
 
     public MainController(
             MttWindow window,
@@ -40,6 +41,8 @@ public class MainController {
         var viewModel = new Main3DViewModel(window, imguiScreen);
         viewModels3D.put(viewModelCount, viewModel);
         viewModelCount++;
+
+        shouldOpenNew3DView = false;
     }
 
     public void declare() {
@@ -60,7 +63,24 @@ public class MainController {
         }
     }
 
-    public void update(MttWindow window) {
+    public void update(MttWindow window, MttScreen imguiScreen) {
+        if (shouldOpenNew3DView) {
+            //Create a new view model
+            var viewModel = new Main3DViewModel(window, imguiScreen);
+            viewModels3D.put(viewModelCount, viewModel);
+            viewModelCount++;
+
+            //Set model filepath if any opened
+            Map<String, String> selections = ImGuiFileDialog.getSelection();
+            selections
+                    .entrySet()
+                    .stream()
+                    .findFirst()
+                    .ifPresent(e -> viewModel.getSelectedFilepath().set(e.getValue()));
+
+            shouldOpenNew3DView = false;
+        }
+
         viewModels3D.forEach((k, v) -> {
             v
                     .getSelectedFilepath()
@@ -102,7 +122,9 @@ public class MainController {
                         .ifPresent(e -> {
                             viewModels3D
                                     .values()
-                                    .forEach(v -> v.getSelectedFilepath().set(e.getValue()));
+                                    .forEach(v -> {
+                                        v.getSelectedFilepath().set(e.getValue());
+                                    });
                         });
             }
             ImGuiFileDialog.close();
@@ -146,6 +168,16 @@ public class MainController {
                 if (ImGui.menuItem("Quit", "Ctrl+Q")) {
                     cbQuit.run();
                 }
+                ImGui.endMenu();
+            }
+            if (ImGui.beginMenu("Edit")) {
+                if (ImGui.beginMenu("3D View")) {
+                    if (ImGui.menuItem("New Window")) {
+                        shouldOpenNew3DView = true;
+                    }
+                    ImGui.endMenu();
+                }
+
                 ImGui.endMenu();
             }
             if (ImGui.beginMenu("Help")) {
