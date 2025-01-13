@@ -3,6 +3,8 @@ package com.github.maeda6uiui.mecheditor;
 import com.github.maeda6uiui.mechtatel.core.MttWindow;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
 import com.github.maeda6uiui.mechtatel.core.input.keyboard.KeyCode;
+import com.github.maeda6uiui.mechtatel.core.postprocessing.PostProcessingProperties;
+import com.github.maeda6uiui.mechtatel.core.postprocessing.light.ParallelLight;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.screen.ScreenImageType;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttModel;
@@ -20,8 +22,9 @@ import java.util.List;
 public class Main3DViewModel {
     private MttScreen screen;
     private MttTexture image;
-    private MttModel model;
     private FreeCamera camera;
+
+    private MttModel model;
 
     private MEProperty<String> selectedFilepath;
 
@@ -31,8 +34,12 @@ public class Main3DViewModel {
                         .setPostProcessingNaborNames(List.of("pp.parallel_light"))
                         .setShouldChangeExtentOnRecreate(false)
         );
-        camera = new FreeCamera(screen.getCamera());
         image = screen.texturize(ScreenImageType.COLOR, imguiScreen);
+
+        PostProcessingProperties ppProps = screen.getPostProcessingProperties();
+        ParallelLight light = ppProps.createParallelLight();
+
+        camera = new FreeCamera(screen.getCamera());
 
         selectedFilepath = new MEProperty<>("");
     }
