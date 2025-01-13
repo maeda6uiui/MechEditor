@@ -64,8 +64,8 @@ public class Main3DViewModel {
         screen.draw();
     }
 
-    public long getScreenImageView() {
-        return image.getVulkanTexture().getTextureImageView();
+    public int getScreenImageAllocationIndex() {
+        return image.getVulkanTexture().getAllocationIndex();
     }
 
     public MEProperty<String> getSelectedFilepath() {
