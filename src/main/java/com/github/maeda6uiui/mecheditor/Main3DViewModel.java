@@ -47,6 +47,11 @@ public class Main3DViewModel {
         selectedFilepath = new MEProperty<>("");
     }
 
+    public void cleanup() {
+        image.cleanup();
+        screen.cleanup();
+    }
+
     public void loadModel(Path modelFile) throws IOException {
         if (model != null) {
             model.cleanup();
