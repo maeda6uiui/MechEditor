@@ -18,7 +18,7 @@ import java.util.List;
  *
  * @author maeda6uiui
  */
-public class Main3DViewModel {
+public class MainViewModel {
     private MttScreen screen;
     private MttTexture image;
     private FreeCamera camera;
@@ -29,7 +29,7 @@ public class Main3DViewModel {
 
     private MEProperty<String> selectedFilepath;
 
-    public Main3DViewModel(MttWindow window, MttScreen imguiScreen) {
+    public MainViewModel(MttWindow window, MttScreen imguiScreen) {
         screen = window.createScreen(
                 new MttScreen.MttScreenCreateInfo()
                         .setPostProcessingNaborNames(List.of("pp.parallel_light"))

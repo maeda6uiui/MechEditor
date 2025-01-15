@@ -28,7 +28,7 @@ public class MainController {
     private Runnable cbQuit;
 
     private static int viewModelCount = 0;
-    private Map<Integer, Main3DViewModel> viewModels3D;
+    private Map<Integer, MainViewModel> viewModels;
     private boolean shouldOpenNew3DView;
 
     public MainController(
@@ -37,9 +37,9 @@ public class MainController {
             Runnable cbQuit) {
         this.cbQuit = cbQuit;
 
-        viewModels3D = new HashMap<>();
-        var viewModel = new Main3DViewModel(window, imguiScreen);
-        viewModels3D.put(viewModelCount, viewModel);
+        viewModels = new HashMap<>();
+        var viewModel = new MainViewModel(window, imguiScreen);
+        viewModels.put(viewModelCount, viewModel);
         viewModelCount++;
 
         shouldOpenNew3DView = false;
@@ -53,7 +53,7 @@ public class MainController {
     }
 
     private void loadModel(String modelFilepath) {
-        for (var viewModel : viewModels3D.values()) {
+        for (var viewModel : viewModels.values()) {
             try {
                 viewModel.loadModel(Paths.get(modelFilepath));
             } catch (IOException e) {
@@ -66,8 +66,8 @@ public class MainController {
     public void update(MttWindow window, MttScreen imguiScreen) {
         if (shouldOpenNew3DView) {
             //Create a new view model
-            var viewModel = new Main3DViewModel(window, imguiScreen);
-            viewModels3D.put(viewModelCount, viewModel);
+            var viewModel = new MainViewModel(window, imguiScreen);
+            viewModels.put(viewModelCount, viewModel);
             viewModelCount++;
 
             //Set model filepath if any opened
@@ -81,7 +81,7 @@ public class MainController {
             shouldOpenNew3DView = false;
         }
 
-        viewModels3D.forEach((k, v) -> {
+        viewModels.forEach((k, v) -> {
             v
                     .getSelectedFilepath()
                     .get()
@@ -120,7 +120,7 @@ public class MainController {
                         .stream()
                         .findFirst()
                         .ifPresent(e -> {
-                            viewModels3D
+                            viewModels
                                     .values()
                                     .forEach(v -> {
                                         v.getSelectedFilepath().set(e.getValue());
@@ -132,7 +132,7 @@ public class MainController {
     }
 
     private void declare3DViews() {
-        viewModels3D.forEach((k, v) -> {
+        viewModels.forEach((k, v) -> {
             if (ImGui.begin(String.format("3D View - %d", k))) {
                 v.setFocused(ImGui.isWindowFocused());
 
