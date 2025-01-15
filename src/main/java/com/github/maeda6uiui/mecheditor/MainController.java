@@ -4,17 +4,18 @@ import com.github.maeda6uiui.mechtatel.core.MttWindow;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
 import com.github.maeda6uiui.mechtatel.core.input.keyboard.KeyCode;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
+import imgui.ImDrawList;
 import imgui.ImGui;
+import imgui.ImGuiIO;
+import imgui.ImVec2;
 import imgui.extension.imguifiledialog.ImGuiFileDialog;
 import imgui.extension.imguifiledialog.flag.ImGuiFileDialogFlags;
 import imgui.flag.ImGuiCol;
-import imgui.flag.ImGuiCond;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -27,9 +28,8 @@ public class MainController {
 
     private Runnable cbQuit;
 
-    private static int viewModelCount = 0;
-    private Map<Integer, MainViewModel> viewModels;
-    private boolean shouldOpenNew3DView;
+    private MainViewModel mainViewModel;
+    private boolean shouldLoadModel;
 
     public MainController(
             MttWindow window,
@@ -37,74 +37,51 @@ public class MainController {
             Runnable cbQuit) {
         this.cbQuit = cbQuit;
 
-        viewModels = new HashMap<>();
-        var viewModel = new MainViewModel(window, imguiScreen);
-        viewModels.put(viewModelCount, viewModel);
-        viewModelCount++;
-
-        shouldOpenNew3DView = false;
+        mainViewModel = new MainViewModel(window, imguiScreen);
+        shouldLoadModel = false;
     }
 
     public void declare() {
         this.setStyle();
         this.declareOpenFileDialog();
+        this.declareMainView();
         this.declareMainMenuBar();
-        this.declare3DViews();
     }
 
     private void loadModel(String modelFilepath) {
-        for (var viewModel : viewModels.values()) {
-            try {
-                viewModel.loadModel(Paths.get(modelFilepath));
-            } catch (IOException e) {
-                logger.error("Failed to load model", e);
-                break;
-            }
+        try {
+            mainViewModel.loadModel(Paths.get(modelFilepath));
+        } catch (IOException e) {
+            logger.error("Failed to load model", e);
         }
     }
 
     public void update(MttWindow window, MttScreen imguiScreen) {
-        if (shouldOpenNew3DView) {
-            //Create a new view model
-            var viewModel = new MainViewModel(window, imguiScreen);
-            viewModels.put(viewModelCount, viewModel);
-            viewModelCount++;
-
-            //Set model filepath if any opened
+        if (shouldLoadModel) {
             Map<String, String> selections = ImGuiFileDialog.getSelection();
             selections
                     .entrySet()
                     .stream()
                     .findFirst()
-                    .ifPresent(e -> viewModel.getSelectedFilepath().set(e.getValue()));
-
-            shouldOpenNew3DView = false;
+                    .ifPresent(e -> this.loadModel(e.getValue()));
+            shouldLoadModel = false;
         }
 
-        viewModels.forEach((k, v) -> {
-            v
-                    .getSelectedFilepath()
-                    .get()
-                    .ifPresent(this::loadModel);
+        FreeCamera camera = mainViewModel.getCamera();
+        camera.translate(
+                window.getKeyboardPressingCount(KeyCode.W),
+                window.getKeyboardPressingCount(KeyCode.S),
+                window.getKeyboardPressingCount(KeyCode.A),
+                window.getKeyboardPressingCount(KeyCode.D)
+        );
+        camera.rotate(
+                window.getKeyboardPressingCount(KeyCode.UP),
+                window.getKeyboardPressingCount(KeyCode.DOWN),
+                window.getKeyboardPressingCount(KeyCode.LEFT),
+                window.getKeyboardPressingCount(KeyCode.RIGHT)
+        );
 
-            if (v.getFocused()) {
-                FreeCamera camera = v.getCamera();
-                camera.translate(
-                        window.getKeyboardPressingCount(KeyCode.W),
-                        window.getKeyboardPressingCount(KeyCode.S),
-                        window.getKeyboardPressingCount(KeyCode.A),
-                        window.getKeyboardPressingCount(KeyCode.D)
-                );
-                camera.rotate(
-                        window.getKeyboardPressingCount(KeyCode.UP),
-                        window.getKeyboardPressingCount(KeyCode.DOWN),
-                        window.getKeyboardPressingCount(KeyCode.LEFT),
-                        window.getKeyboardPressingCount(KeyCode.RIGHT)
-                );
-            }
-
-            v.draw();
-        });
+        mainViewModel.draw();
     }
 
     private void setStyle() {
@@ -114,38 +91,22 @@ public class MainController {
     private void declareOpenFileDialog() {
         if (ImGuiFileDialog.display("open_file", ImGuiFileDialogFlags.None, 400, 300)) {
             if (ImGuiFileDialog.isOk()) {
-                Map<String, String> selections = ImGuiFileDialog.getSelection();
-                selections
-                        .entrySet()
-                        .stream()
-                        .findFirst()
-                        .ifPresent(e -> {
-                            viewModels
-                                    .values()
-                                    .forEach(v -> {
-                                        v.getSelectedFilepath().set(e.getValue());
-                                    });
-                        });
+                shouldLoadModel = true;
             }
             ImGuiFileDialog.close();
         }
     }
 
-    private void declare3DViews() {
-        viewModels.forEach((k, v) -> {
-            if (ImGui.begin(String.format("3D View - %d", k))) {
-                v.setFocused(ImGui.isWindowFocused());
+    private void declareMainView() {
+        ImGuiIO io = ImGui.getIO();
+        ImVec2 windowSize = io.getDisplaySize();
 
-                ImGui.setWindowPos(50 * (k % 10 + 1), 50 * (k % 10 + 1), ImGuiCond.FirstUseEver);
-                ImGui.setWindowSize(640, 480, ImGuiCond.FirstUseEver);
-                ImGui.image(
-                        v.getScreenImageAllocationIndex(),
-                        ImGui.getContentRegionAvailX(),
-                        ImGui.getContentRegionAvailY()
-                );
-            }
-            ImGui.end();
-        });
+        ImDrawList drawList = ImGui.getBackgroundDrawList();
+        drawList.addImage(
+                mainViewModel.getScreenImageAllocationIndex(),
+                new ImVec2(0, 0),
+                windowSize
+        );
     }
 
     private void declareMainMenuBar() {
@@ -168,16 +129,6 @@ public class MainController {
                 if (ImGui.menuItem("Quit", "Ctrl+Q")) {
                     cbQuit.run();
                 }
-                ImGui.endMenu();
-            }
-            if (ImGui.beginMenu("Edit")) {
-                if (ImGui.beginMenu("3D View")) {
-                    if (ImGui.menuItem("New Window")) {
-                        shouldOpenNew3DView = true;
-                    }
-                    ImGui.endMenu();
-                }
-
                 ImGui.endMenu();
             }
             if (ImGui.beginMenu("Help")) {

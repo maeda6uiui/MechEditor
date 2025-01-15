@@ -25,10 +25,6 @@ public class MainViewModel {
 
     private MttModel model;
 
-    private boolean focused;
-
-    private MEProperty<String> selectedFilepath;
-
     public MainViewModel(MttWindow window, MttScreen imguiScreen) {
         screen = window.createScreen(
                 new MttScreen.MttScreenCreateInfo()
@@ -41,10 +37,6 @@ public class MainViewModel {
         ParallelLight light = ppProps.createParallelLight();
 
         camera = new FreeCamera(screen.getCamera());
-
-        focused = false;
-
-        selectedFilepath = new MEProperty<>("");
     }
 
     public void cleanup() {
@@ -70,17 +62,5 @@ public class MainViewModel {
 
     public FreeCamera getCamera() {
         return camera;
-    }
-
-    public void setFocused(boolean focused) {
-        this.focused = focused;
-    }
-
-    public boolean getFocused() {
-        return focused;
-    }
-
-    public MEProperty<String> getSelectedFilepath() {
-        return selectedFilepath;
     }
 }
