@@ -9,7 +9,6 @@ import com.github.maeda6uiui.mechtatel.core.postprocessing.light.ParallelLight;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.screen.ScreenImageType;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttLineSet;
-import com.github.maeda6uiui.mechtatel.core.screen.component.MttModel;
 import com.github.maeda6uiui.mechtatel.core.screen.texture.MttTexture;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
@@ -28,7 +27,6 @@ public class MainViewModel {
     private MttTexture image;
     private FreeCamera camera;
 
-    private MttModel model;
     private List<BD1Block> blocks;
     private MttLineSet blockEdges;
 
@@ -56,12 +54,6 @@ public class MainViewModel {
     }
 
     public void loadModel(Path modelFile) throws IOException {
-        if (model != null) {
-            model.cleanup();
-        }
-        model = screen.createModel(modelFile);
-        model.setVisible(false);
-
         //Create line set for block edges
         final float BD1_MODEL_SCALE = 1.7f / 20.0f;
 
